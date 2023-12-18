@@ -3,45 +3,35 @@ class Edge:
         self.destination = destination
         self.capacity = capacity
         self.remaining = capacity
-
-
 class Node:
-
     def __init__(self, name, level=0, edges=None):
         self.name = name
         self.level = level
         if edges is None:
             self.edges = []
-
     def add_edge(self, destination, weight):
         self.edges.append(Edge(destination, weight))
-
     def get_children(self):
         res = []
         for edge in self.edges:
             res.append(edge.destination)
         return res
-
     def __str__(self):
         res = str(self.name) + " ({})".format(str(self.level))
         for edge in self.edges:
             res = res + " --> {} ({})".format(str(edge.destination), str(edge.remaining))
         return res
-
-
 class Graph:
     nodes = []
     flow = []
     permanent_dead_ends = []
     levels = []
-
     def __init__(self, entrances, exits, matrix):
         self.entrances = entrances
         self.exits = exits
         self.matrix = matrix
         for i in range(0, len(self.matrix)):
             self.nodes.append(Node(i))
-
     def create(self):
         for i in range(0, len(self.matrix)):
             if self.nodes[i].name in self.exits:
@@ -49,7 +39,6 @@ class Graph:
             for j in range(0, len(self.matrix[i])):
                 if self.matrix[i][j] != 0:
                     self.nodes[i].add_edge(j, self.matrix[i][j])
-
     def bfs(self):
         queue = self.entrances[:]
         seen = self.entrances[:]
@@ -80,15 +69,12 @@ class Graph:
 
         if self.is_finished():
             return False
-
         return True
-
     def is_finished(self):
         for ex in self.exits:
             if self.levels[ex] != -1:
                 return False
         return True
-
     def choose_next_node(self, candidates, dead_ends):
         for i in candidates:
             previous_level = self.nodes[i].level
@@ -98,7 +84,6 @@ class Graph:
                         and (edge.destination not in dead_ends):
                     return i, edge, edge.remaining
         return None, None, None
-
     def dfs(self):
         path = []
         capacities = []
@@ -116,7 +101,6 @@ class Graph:
                 capacities.append(capacity)
         else:
             return
-
         while next_node not in self.exits and len(path) > 0:
             if next_node != path[-1]:
                 path.append(next_node)
@@ -151,11 +135,9 @@ class Graph:
                             capacities.append(capacity)
                     else:
                         return
-
         if len(path) < 1:
             #print("no path found!")
             return False
-
         capacity = min(capacities)
         #print("capacity: {}".format(capacity))
         self.flow.append(capacity)
@@ -171,10 +153,7 @@ class Graph:
             i += 1
         #for node in self.nodes:
             #print(node)
-
         return False
-
-
 def solution(entrances, exits, matrix):
     graph = Graph(entrances,  exits, matrix)
     graph.create()
